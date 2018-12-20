@@ -65,8 +65,8 @@ class ClientPlane(pygame.sprite.Sprite, Plane):
 
         self.is_double_bullet = False#子弹发射方式
         self.bomb_num = 1#炸弹数
-        #生成子弹
-        self.bulletGroup = bullet.BulletGroup(self, flyWight)
+
+        self.fire_command = None
 
     def moveUp(self):
         if self.rect.top > 0:
@@ -137,8 +137,9 @@ class ClientPlane(pygame.sprite.Sprite, Plane):
     def increaseBombNum(self):#炸弹数不得超过三个
         if self.bomb_num < 3:
             self.bomb_num += 1
+
     def fireBullet(self):
-        return self.bulletGroup.fireBullet()
+        return self.fire_command.executeCommand()
 
 
 class EnemyPlane1(pygame.sprite.Sprite, Plane):  

@@ -118,7 +118,10 @@ class FlyWight:
         self.level_3_rect = self.level_3_image.get_rect()
         #结束界面
         self.again_image = pygame.image.load("images/again.png").convert_alpha()
+        self.again_rect = self.again_image.get_rect()
         self.gameover_image = pygame.image.load("images/gameover.png").convert_alpha()
-        
+        self.gameover_rect = self.gameover_image.get_rect()
         self.gameover_font = pygame.font.Font("font/font.TTF", 48)
+        #分数的字体
+        self.score_font = pygame.font.Font("font/font.ttf", 36)
 
