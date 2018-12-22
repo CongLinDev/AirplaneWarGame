@@ -109,7 +109,7 @@ class FlyWight:
         #背景图
         self.background = pygame.image.load("images/background.png").convert()
         #开始界面
-        self.start_font = pygame.font.Font("font/font.TTF", 48)
+        self.start_font = pygame.font.Font("font/font.TTF", 42)
         self.level_1_image = pygame.image.load("images/level_1.png").convert_alpha()
         self.level_2_image = pygame.image.load("images/level_2.png").convert_alpha()
         self.level_3_image = pygame.image.load("images/level_3.png").convert_alpha()

@@ -1,3 +1,4 @@
+#coding=utf-8
 import pygame
 import sys
 import traceback
@@ -31,6 +32,10 @@ def readyForGame(clock, flyWight):
         clock.tick(60)
         pygame.display.update()
         screen.blit(flyWight.background, (0, 0))
+        gamestart_text = flyWight.start_font.render("Welecome to Airplane War", True, flyWight.WHITE)
+        gamestart_text_rect = gamestart_text.get_rect()
+        gamestart_text_rect.left, gamestart_text_rect.top = (width - gamestart_text_rect.width) // 2, 100
+        screen.blit(gamestart_text, gamestart_text_rect)
         level1Button.showImage(screen)
         level2Button.showImage(screen)
         level3Button.showImage(screen)
@@ -49,23 +54,24 @@ def readyForGame(clock, flyWight):
         pygame.display.flip()
 
 def gameOver(clock, flyWight, score):
+    pygame.mixer.music.stop()
+    pygame.mixer.stop()
     gameAgainButton = button.GameAgainButton(flyWight, bg_size)
     gameOverButton = button.GameOverButton(flyWight, bg_size)
     while True:
         clock.tick(60)
         pygame.display.update()
 
+        screen.blit(flyWight.background, (0, 0))
         gameover_text1 = flyWight.gameover_font.render("Your Score", True, flyWight.WHITE)
         gameover_text1_rect = gameover_text1.get_rect()
-        gameover_text1_rect.left, gameover_text1_rect.top = (width - gameover_text1_rect.width) // 2, height // 3
+        gameover_text1_rect.left, gameover_text1_rect.top = (width - gameover_text1_rect.width) // 2, 200
         screen.blit(gameover_text1, gameover_text1_rect)
         gameover_text2 = flyWight.gameover_font.render(str(score), True, flyWight.WHITE)
         gameover_text2_rect = gameover_text2.get_rect()
-        gameover_text2_rect.left, gameover_text2_rect.top = (width - gameover_text2_rect.width) // 2, \
-                                gameover_text1_rect.bottom + 10
+        gameover_text2_rect.left, gameover_text2_rect.top = (width - gameover_text2_rect.width) // 2, 300
         screen.blit(gameover_text2, gameover_text2_rect)
 
-        screen.blit(flyWight.background, (0, 0))
         gameAgainButton.showImage(screen)
         gameOverButton.showImage(screen)
         for event in pygame.event.get():
@@ -107,7 +113,7 @@ def main():
     score = 0#统计得分   
     delay = 100#延迟
 
-    while True:
+    while me.life_num:
         #TODO：对事件进行分析
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -136,53 +142,47 @@ def main():
                 aerolite_barrier.reset()
         
         screen.blit(flyWight.background, (0, 0))
-        #TODO：具体操作
-        if me.life_num:
-            #检测键盘操作
-            key_pressed = pygame.key.get_pressed()
-            if key_pressed[K_w] or key_pressed[K_UP]:
-                me.moveUp()
-            if key_pressed[K_s] or key_pressed[K_DOWN]:
-                me.moveDown()
-            if key_pressed[K_a] or key_pressed[K_LEFT]:
-                me.moveLeft()
-            if key_pressed[K_d] or key_pressed[K_RIGHT]:
-                me.moveRight()
-
-            #绘制补给
-            bullet_supply.drawSupply(screen, me)
-            bomb_supply.drawSupply(screen, me)
-            #绘制障碍物
-            aerolite_barrier.drawBarrier(screen, me)
-            #发射子弹
-            if not (delay % 10):
-                bullets = me.fireBullet()
-            #检测子弹是否击中敌机
-            bullet.Bullet.hit_enemy_plane(bullets, screen, enemy_plane)
-            #绘制敌机
-            for each in enemy_plane:
-                getScore = each.drawPlane(screen, delay)
-                if getScore != 0:
-                    score += getScore
-                    each.reset()
-            #检测客户机是否被撞
-            me.checkPlane(enemy_plane)           
-            #绘制客户机
-            getScore = me.drawPlane(screen, delay)
-            score += getScore
-            #画出生命值和分数
-            me.drawLifeNumAndScore(screen, flyWight.score_font, score)
-
-        elif me.life_num == 0:#游戏结束
-            pygame.mixer.music.stop()
-            pygame.mixer.stop()
-            gameOver(clock, flyWight, score)
+        #检测键盘操作
+        key_pressed = pygame.key.get_pressed()
+        if key_pressed[K_w] or key_pressed[K_UP]:
+            me.moveUp()
+        if key_pressed[K_s] or key_pressed[K_DOWN]:
+            me.moveDown()
+        if key_pressed[K_a] or key_pressed[K_LEFT]:
+            me.moveLeft()
+        if key_pressed[K_d] or key_pressed[K_RIGHT]:
+            me.moveRight()
+        #绘制补给
+        bullet_supply.drawSupply(screen, me)
+        bomb_supply.drawSupply(screen, me)
+        #绘制障碍物
+        aerolite_barrier.drawBarrier(screen, me)
+        #发射子弹
+        if not (delay % 10):
+            bullets = me.fireBullet()
+        #检测子弹是否击中敌机
+        bullet.Bullet.hit_enemy_plane(bullets, screen, enemy_plane)
+        #绘制敌机
+        for each in enemy_plane:
+            getScore = each.drawPlane(screen, delay)
+            if getScore != 0:
+                score += getScore
+                each.reset()
+        #检测客户机是否被撞
+        me.checkPlane(enemy_plane)           
+        #绘制客户机
+        getScore = me.drawPlane(screen, delay)
+        score += getScore
+        #画出生命值和分数
+        me.drawLifeNumAndScore(screen, flyWight.score_font, score)
 
         delay -= 1
         if not delay:
             delay = 100
         pygame.display.flip()
         clock.tick(60)
+
+    gameOver(clock, flyWight, score)
 
 if __name__ == "__main__":
     try:

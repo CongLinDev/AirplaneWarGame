@@ -24,7 +24,7 @@ class Button:
 class Level_1_Button(Button):
     def __init__(self, flyWight, bg_size):
         flyWight.level_1_rect.left = (bg_size[0] - flyWight.level_1_rect.width) // 2
-        flyWight.level_1_rect.top = 100
+        flyWight.level_1_rect.top = 300
         Button.__init__(self,flyWight.level_1_image, flyWight.level_1_rect)
     
     def function(self):
@@ -33,7 +33,7 @@ class Level_1_Button(Button):
 class Level_2_Button(Button):
     def __init__(self, flyWight, bg_size):
         flyWight.level_2_rect.left = (bg_size[0] - flyWight.level_2_rect.width) // 2
-        flyWight.level_2_rect.top = 200
+        flyWight.level_2_rect.top = 400
         Button.__init__(self,flyWight.level_2_image, flyWight.level_2_rect)
     
     def function(self):
@@ -42,7 +42,7 @@ class Level_2_Button(Button):
 class Level_3_Button(Button):
     def __init__(self, flyWight, bg_size):
         flyWight.level_3_rect.left = (bg_size[0] - flyWight.level_3_rect.width) // 2
-        flyWight.level_3_rect.top = 300
+        flyWight.level_3_rect.top = 500
         Button.__init__(self,flyWight.level_3_image, flyWight.level_3_rect)
     
     def function(self):
@@ -51,7 +51,7 @@ class Level_3_Button(Button):
 class GameAgainButton(Button):
     def __init__(self, flyWight, bg_size):
         flyWight.again_rect.left = (bg_size[0] - flyWight.again_rect.width) // 2
-        flyWight.again_rect.top = 300
+        flyWight.again_rect.top = 400
         Button.__init__(self,flyWight.again_image, flyWight.again_rect)
     def function(self):#重新开始
         return True
@@ -59,7 +59,7 @@ class GameAgainButton(Button):
 class GameOverButton(Button):
     def __init__(self, flyWight, bg_size):
         flyWight.gameover_rect.left = (bg_size[0] - flyWight.gameover_rect.width) // 2
-        flyWight.gameover_rect.top = 400
+        flyWight.gameover_rect.top = 500
         Button.__init__(self,flyWight.gameover_image, flyWight.gameover_rect)
     def function(self):#结束
         return True   
