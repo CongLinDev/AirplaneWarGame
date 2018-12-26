@@ -26,6 +26,11 @@ Use the instruction `python ./main.py` to run the game.
 ## Architecture
 I will give the UML later.
 
+## Demo
+<video id="video" controls="" preload="none" poster="https://i.loli.net/2018/06/15/5b23b74f0d883.jpg">
+      <source id="mp4" src="demo/demo.mp4" type="video/mp4">
+      </video>
+
 ## License
 
 No license.
