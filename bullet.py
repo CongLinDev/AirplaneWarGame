@@ -13,20 +13,6 @@ class Bullet:
     def reset(self, position):
         pass
     
-    @staticmethod
-    def hit_enemy_plane(bullets, screen, enemy_plane):
-        for bullet in bullets:
-            if bullet.active:
-                bullet.moveUp()
-                screen.blit(bullet.image, bullet.rect)
-                enemy_hit = pygame.sprite.spritecollide(bullet, enemy_plane, False, pygame.sprite.collide_mask)
-                if enemy_hit:
-                    bullet.active = False
-                    for enemy in enemy_hit:#对于每个受到攻击的敌机
-                        enemy.hit = True
-                        enemy.energy -= 1
-                        if enemy.energy == 0:
-                            enemy.active = False
 
     @staticmethod
     def fireBullet(flyWight, clientPlane, bullets, index):
@@ -88,6 +74,7 @@ class Bullet2(Bullet):
 class BulletGroup:
     def __init__(self, clientPlane, flyWight):
         #生成子弹
+        self.bullets = None
         self.bullet1 = []
         self.bullet2 = []
         self.bullet1_index = 0
@@ -101,7 +88,21 @@ class BulletGroup:
     def fireBullet(self):
         if self.clientPlane.is_double_bullet:
             self.bullet2_index = Bullet.fireBullet(self.flyWight, self.clientPlane, self.bullet2, self.bullet2_index)
-            return self.bullet2
+            self.bullets = self.bullet2
         else:
             self.bullet1_index = Bullet.fireBullet(self.flyWight, self.clientPlane, self.bullet1, self.bullet1_index)
-            return self.bullet1
+            self.bullets = self.bullet1
+
+    def hitPlane(self, screen, enemy_plane):
+        for bullet in self.bullets:
+            if bullet.active:
+                bullet.moveUp()
+                screen.blit(bullet.image, bullet.rect)
+                enemy_hit = pygame.sprite.spritecollide(bullet, enemy_plane, False, pygame.sprite.collide_mask)
+                if enemy_hit:
+                    bullet.active = False
+                    for enemy in enemy_hit:#对于每个受到攻击的敌机
+                        enemy.hit = True
+                        enemy.energy -= 1
+                        if enemy.energy == 0:
+                            enemy.active = False

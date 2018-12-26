@@ -159,9 +159,9 @@ def main():
         aerolite_barrier.drawBarrier(screen, me)
         #发射子弹
         if not (delay % 10):
-            bullets = me.fireBullet()
+            me.fireBullet()
         #检测子弹是否击中敌机
-        bullet.Bullet.hit_enemy_plane(bullets, screen, enemy_plane)
+        bulletGroup.hitPlane(screen, enemy_plane)
         #绘制敌机
         for each in enemy_plane:
             getScore = each.drawPlane(screen, delay)

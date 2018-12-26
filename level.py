@@ -32,7 +32,7 @@ class Level_3(Level):
     def changeLevel(bg_size, enemy_plane, flyWight):
         enemy_plane.empty()
         plane_factory.EnemyPlane1Factory.createNumPlane(bg_size, flyWight, enemy_plane, 16)
-        plane_factory.EnemyPlane2Factory.createNumPlane(bg_size, flyWight, enemy_plane, 6)
-        plane_factory.EnemyPlane3Factory.createNumPlane(bg_size, flyWight, enemy_plane, 3)
+        plane_factory.EnemyPlane2Factory.createNumPlane(bg_size, flyWight, enemy_plane, 8)
+        plane_factory.EnemyPlane3Factory.createNumPlane(bg_size, flyWight, enemy_plane, 4)
         enemy_plane.update(2)#设置速度为2
         

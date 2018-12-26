@@ -4,6 +4,14 @@ import flywight
 import random
 import bullet
 
+def Singleton(cls):#利用装饰器实现单例模式，cls表示类名
+    instance = {}
+    def singleton(*args, **kargs):
+        if cls not in instance:#如果没有这个类，创建这个类的对象将其放入字典中
+            instance[cls] = cls(*args, **kargs)
+            return instance[cls]
+    return singleton
+
 class Plane:
     __metaclass__= abc.ABCMeta #抽象类
 
@@ -35,7 +43,7 @@ class Plane:
     def update(self, newSpeed):#用于更新飞机速度
         self.speed = newSpeed
 
-
+@Singleton #单例模式
 class ClientPlane(pygame.sprite.Sprite, Plane):
     #发射子弹的方式
 
@@ -115,7 +123,7 @@ class ClientPlane(pygame.sprite.Sprite, Plane):
                     return -10#返回的是得到的分数
         return 0#返回的是得到的分数
 
-    #检测飞机是否被撞，或是被子弹打中
+    #检测飞机是否被撞
     def checkPlane(self, enemy):
         enemies_down = pygame.sprite.spritecollide(self, enemy, False, pygame.sprite.collide_mask)
         if enemies_down:
