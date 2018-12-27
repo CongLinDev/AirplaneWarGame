@@ -16,11 +16,11 @@ class Supply:
         pass
 
 class Bullet_Supply(Supply, pygame.sprite.Sprite):
-    def __init__(self, bg_size, flyWight):
+    def __init__(self, bg_size):
         Supply.__init__(self)
         pygame.sprite.Sprite.__init__(self)
-        self.flyWight = flyWight
-        self.image = pygame.image.load("images/bullet_supply.png").convert_alpha()
+        self.flyWight = flywight.Supply_FlyWight()
+        self.image = self.flyWight.bullet_supply_image
         self.rect = self.image.get_rect()
         self.width, self.height = bg_size[0], bg_size[1]
         self.rect.left, self.rect.bottom = \
@@ -51,15 +51,16 @@ class Bullet_Supply(Supply, pygame.sprite.Sprite):
                 self.active = False
 
 class Bomb_Supply(Supply, pygame.sprite.Sprite):
-    def __init__(self, bg_size, flyWight):
+    def __init__(self, bg_size):
         Supply.__init__(self)
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("images/bomb_supply.png").convert_alpha()
+        self.flyWight = flywight.Supply_FlyWight()
+        self.image = self.flyWight.bomb_supply_image
         self.rect = self.image.get_rect()
         self.width, self.height = bg_size[0], bg_size[1]
         self.rect.left, self.rect.bottom = \
                         random.randint(0, self.width - self.rect.width), -100
-        self.flyWight = flyWight
+        
         self.speed = 2
         self.active = False
         self.mask = pygame.mask.from_surface(self.image)

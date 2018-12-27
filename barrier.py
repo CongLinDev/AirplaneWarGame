@@ -15,11 +15,11 @@ class Barrier:
 
 #陨石
 class Aerolite_Barrier(Barrier, pygame.sprite.Sprite):
-    def __init__(self, bg_size, flyWight):
+    def __init__(self, bg_size):
         Barrier.__init__(self)
         pygame.sprite.Sprite.__init__(self)
-        self.flyWight = flyWight
-        self.image = flyWight.aerolite_barrier_image
+        self.flyWight = flywight.Aerolite_Barrier_FlyWight()
+        self.image = self.flyWight.aerolite_barrier_image
         self.rect = self.image.get_rect()
         self.width, self.height = bg_size[0], bg_size[1]
         self.rect.left, self.rect.bottom = \
@@ -53,3 +53,4 @@ class Aerolite_Barrier(Barrier, pygame.sprite.Sprite):
                 clientPlane.active = False
                 pygame.time.set_timer(self.flyWight.BARRIER_TIME, 10 * 1000)
                 self.active = False
+

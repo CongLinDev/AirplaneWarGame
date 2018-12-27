@@ -24,10 +24,21 @@ pygame.display.set_caption("飞机大战")
 pygame.mixer.music.load("sound/game_music.ogg")
 pygame.mixer.music.set_volume(0.2)
 
-def readyForGame(clock, flyWight):
-    level1Button = button.Level_1_Button(flyWight, bg_size)
-    level2Button = button.Level_2_Button(flyWight, bg_size)
-    level3Button = button.Level_3_Button(flyWight, bg_size)
+
+def readyForGame(clock, flyWight, enemy_plane):
+    levelButtons = (\
+        button.Button(flyWight.level_1_image),\
+        button.Button(flyWight.level_2_image),\
+        button.Button(flyWight.level_3_image),\
+        )
+    top = 300
+    for each in levelButtons:
+        each.layOut(((bg_size[0] - each.rect.width) // 2, top))
+        top += 100
+    levelButtons[0].setListener(level.Level_1(enemy_plane, bg_size))
+    levelButtons[1].setListener(level.Level_2(enemy_plane, bg_size))
+    levelButtons[2].setListener(level.Level_3(enemy_plane, bg_size))
+
     while True:
         clock.tick(60)
         pygame.display.update()
@@ -36,28 +47,31 @@ def readyForGame(clock, flyWight):
         gamestart_text_rect = gamestart_text.get_rect()
         gamestart_text_rect.left, gamestart_text_rect.top = (width - gamestart_text_rect.width) // 2, 100
         screen.blit(gamestart_text, gamestart_text_rect)
-        level1Button.showImage(screen)
-        level2Button.showImage(screen)
-        level3Button.showImage(screen)
+
+        for each in levelButtons:
+            each.showImage(screen)
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
             elif event.type ==  MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                if level1Button.isClickButton(pos):
-                    return level1Button.function()
-                elif level2Button.isClickButton(pos):
-                    return level2Button.function()
-                elif level3Button.isClickButton(pos):
-                    return level3Button.function()
+                for each in levelButtons:
+                    if each.isClicked(pos):
+                        return each.done()
         pygame.display.flip()
 
 def gameOver(clock, flyWight, score):
     pygame.mixer.music.stop()
     pygame.mixer.stop()
-    gameAgainButton = button.GameAgainButton(flyWight, bg_size)
-    gameOverButton = button.GameOverButton(flyWight, bg_size)
+    gameAgainButton = button.Button(flyWight.again_image)
+    gameOverButton = button.Button(flyWight.gameover_image)
+    pos_again = (bg_size[0] - gameAgainButton.rect.width) // 2, 400
+    gameAgainButton.layOut(pos_again)
+    pos_gameOver = (bg_size[0] - gameOverButton.rect.width) // 2, 500
+    gameOverButton.layOut(pos_gameOver)
+
     while True:
         clock.tick(60)
         pygame.display.update()
@@ -80,35 +94,35 @@ def gameOver(clock, flyWight, score):
                 sys.exit()
             elif event.type ==  MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                if gameAgainButton.isClickButton(pos):
+                if gameAgainButton.isClicked(pos):
                     main()
-                elif gameOverButton.isClickButton(pos):
+                elif gameOverButton.isClicked(pos):
                     pygame.quit()
                     sys.exit()
         pygame.display.flip()
 
-def main():
+def main():  
     clock = pygame.time.Clock()
     pygame.mixer.music.play(-1)
-    flyWight = flywight.FlyWight()#享元
-    #获取用户设置的等级
-    currentLevel = readyForGame(clock, flyWight)
+    flyWight = flywight.Common_FlyWight()
     #生成飞机
-    me = plane_factory.ClientPlaneFactory.createPlane(bg_size, flyWight)#生成我方飞机
+    me = plane_factory.ClientPlaneFactory.createPlane(bg_size)#生成我方飞机
     enemy_plane = pygame.sprite.Group()#敌方飞机集合
+    #获取用户设置的关卡等级，以此用于敌军集合的生成，且生成敌军
+    readyForGame(clock, flyWight, enemy_plane)
     #生成子弹
-    bulletGroup = bullet.BulletGroup(me, flyWight)
+    bulletGroup = bullet.BulletGroup(me)
     #给飞机装配子弹
     me.fire_command = command.FireBulletCommand(bulletGroup)
-    #调整等级
-    currentLevel.changeLevel(bg_size, enemy_plane, flyWight)
     #生成补给
-    bullet_supply = supply.Bullet_Supply(bg_size, flyWight)
-    bomb_supply = supply.Bomb_Supply(bg_size, flyWight)
-    pygame.time.set_timer(flyWight.SUPPLY_TIME, 30 * 1000)
+    bullet_supply = supply.Bullet_Supply(bg_size)
+    bomb_supply = supply.Bomb_Supply(bg_size)
+    supplyFlyWight = flywight.Supply_FlyWight()
+    pygame.time.set_timer(supplyFlyWight.SUPPLY_TIME, 30 * 1000)
     #生成障碍物
-    aerolite_barrier = barrier.Aerolite_Barrier(bg_size, flyWight)
-    pygame.time.set_timer(flyWight.BARRIER_TIME, 10 * 1000)
+    aerolite_barrier = barrier.Aerolite_Barrier(bg_size)
+    barrierFlyWight = flywight.Aerolite_Barrier_FlyWight()
+    pygame.time.set_timer(barrierFlyWight.BARRIER_TIME, 10 * 1000)
 
     score = 0#统计得分   
     delay = 100#延迟
@@ -120,25 +134,26 @@ def main():
                 pygame.quit()
                 sys.exit()
             elif event.type == KEYDOWN:#键盘事件
-                if event.key == K_SPACE:#空格键
+                if event.key == K_SPACE:#空格键  使用炸弹
                     if me.bomb_num:#使用炸弹
                         me.bomb_num -= 1
-                        flyWight.bomb_sound.play()
-                        aerolite_barrier.active = False
+                        supplyFlyWight.bomb_sound.play()
+                        if aerolite_barrier.rect.bottom > 0:
+                            aerolite_barrier.active = False#在界面中的障碍物
                         for each in enemy_plane:
                             if each.rect.bottom > 0:#在界面中的敌机
                                 each.active = False
-            elif event.type == flyWight.SUPPLY_TIME:#补给时间
-                flyWight.supply_sound.play()
+            elif event.type == supplyFlyWight.SUPPLY_TIME:#补给时间
+                supplyFlyWight.supply_sound.play()
                 #随机生成补给
                 if random.choice([True, False]):
                     bullet_supply.reset()
                 else:
                     bomb_supply.reset()
-            elif event.type == flyWight.DOUBLE_BULLET_TIME:
+            elif event.type == supplyFlyWight.DOUBLE_BULLET_TIME:
                 me.is_double_bullet = False
-                pygame.time.set_timer(flyWight.DOUBLE_BULLET_TIME, 0)
-            elif event.type == flyWight.BARRIER_TIME:
+                pygame.time.set_timer(supplyFlyWight.DOUBLE_BULLET_TIME, 0)
+            elif event.type == barrierFlyWight.BARRIER_TIME:
                 aerolite_barrier.reset()
         
         screen.blit(flyWight.background, (0, 0))
@@ -160,8 +175,8 @@ def main():
         #发射子弹
         if not (delay % 10):
             me.fireBullet()
-        #检测子弹是否击中敌机
-        bulletGroup.hitPlane(screen, enemy_plane)
+        #检测子弹是否击中物体
+        bulletGroup.hitPlaneAndBarrier(screen, enemy_plane, aerolite_barrier)
         #绘制敌机
         for each in enemy_plane:
             getScore = each.drawPlane(screen, delay)
