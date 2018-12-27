@@ -24,7 +24,6 @@ pygame.display.set_caption("飞机大战")
 pygame.mixer.music.load("sound/game_music.ogg")
 pygame.mixer.music.set_volume(0.2)
 
-
 def readyForGame(clock, flyWight, enemy_plane):
     levelButtons = (\
         button.Button(flyWight.level_1_image),\
