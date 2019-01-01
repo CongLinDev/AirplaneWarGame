@@ -25,6 +25,8 @@ Use the instruction `python ./main.py` to run the game.
 
 ## Architecture
 
+Click [here](https://conglindev.github.io/2019/01/01/%E9%A3%9E%E6%9C%BA%E5%A4%A7%E6%88%98%E6%B8%B8%E6%88%8F%E8%AE%BE%E8%AE%A1/#more) to get the introduction of the project in Chinese.
+
 Here is class diagram of the project.   
 
 ![uml.png](https://i.loli.net/2018/12/27/5c24d578d7f0a.png)   
